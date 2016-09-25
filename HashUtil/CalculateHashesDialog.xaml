@@ -1,0 +1,29 @@
+﻿<Window x:Class="HashUtil.CalculateHashesDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:HashUtil"
+        mc:Ignorable="d"
+        Title="HashUtil" Height="332" Width="929">
+    <Grid>
+        <ListView x:Name="listView" ItemsSource="{DynamicResource result}" Margin="0,0,0,18">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Algorithm"
+                            DisplayMemberBinding="{Binding Key}" />
+                    <GridViewColumn Header="Hash"
+                            DisplayMemberBinding="{Binding Value}" />
+                </GridView>
+            </ListView.View>
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Copy" Click="Menu_CopyUnderCursor_Click"/>
+                    <MenuItem Header="Copy Selected (ctrl+c)" Click="Menu_CopySelected_Click"/>
+                    <MenuItem Header="Copy All" Click="Menu_CopyAll_Click"/>
+                </ContextMenu>
+            </ListView.ContextMenu>
+        </ListView>
+        <ProgressBar x:Name="progressBarHashing" Height="18" VerticalAlignment="Bottom"/>
+    </Grid>
+</Window>
