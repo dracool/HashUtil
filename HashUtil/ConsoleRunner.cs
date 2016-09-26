@@ -27,7 +27,7 @@ namespace HashUtil
                 frame = 1;
             }
 
-            private int y {get;}
+            private int y { get; }
             private int x { get; }
             private int w { get; }
             private int frame;
@@ -109,6 +109,15 @@ namespace HashUtil
                 }
             }
         }
+        
+        static void Drawing(Action a)
+        {
+            var fg = ForegroundColor;
+            var bg = BackgroundColor;
+            a();
+            ForegroundColor = fg;
+            BackgroundColor = bg; 
+        }
 
         static void InvertColors()
         {
@@ -117,47 +126,47 @@ namespace HashUtil
             ForegroundColor = temp;
         }
 
-        static void Inverted(Action a)
+        static void Inverted(Action a) => Drawing( () =>
         {
-
             InvertColors();
             a();
-            InvertColors();
-        }
+        });
 
         static void Colored(ConsoleColor foreground, Action a)
         {
             Colored(foreground, BackgroundColor, a);
         }
 
-        static void Colored(ConsoleColor foreground, ConsoleColor background, Action a)
+        static void Colored(ConsoleColor foreground, ConsoleColor background, Action a) => Drawing( () =>
         {
-            var fg = ForegroundColor;
-            var bg = BackgroundColor;
             ForegroundColor = foreground;
             BackgroundColor = background;
             a();
-            ForegroundColor = fg;
-            BackgroundColor = bg;
-        }
+        });
 
-        static void HorzLine(int x, int y, int w) => Inverted(() =>
+        static void HorzLine(int x, int y, int w, char c = '=') => Drawing(() =>
         {
             for (int i = 0; i < w; i++)
             {
                 SetCursorPosition(x + i, y);
-                Write(' ');
+                Write(c);
             }
         });
 
-        static public void VertLine(int x, int y, int h) => Inverted(() =>
+        static public void VertLine(int x, int y, int h, char c = '|') => Drawing(() =>
         {
             for (int i = 0; i < h; i++)
             {
                 SetCursorPosition(x, y + i);
-                Write(' ');
+                Write(c);
             }
         });
+        
+        static public void Dot(int x, int y, char c)
+        {
+            SetCursorPosition(x, y);
+            Write(c);
+        }
 
         static public void Box(int x, int y, int w, int h)
         {
@@ -165,6 +174,10 @@ namespace HashUtil
             VertLine(x, y, h);
             HorzLine(x, y + h - 1, w);
             VertLine(x + w - 1, y, h);
+            Dot(x, y);
+            Dot(x + w - 1, y);
+            Dot(x, y + h - 1);
+            Dot(x + w - 1, y + h - 1);
         }
 
         static public void WriteTextOn(int x, int y, int width, string text, bool center = true)
@@ -186,7 +199,7 @@ namespace HashUtil
 
     abstract class ConsoleDialog
     {
-        public static int Height { get; private set; } = 20;
+        public int Height { get; protected set; } = 20;
 
         protected void Update()
         {
@@ -200,6 +213,11 @@ namespace HashUtil
 
     class ConsoleMatchHashDialog : ConsoleDialog
     {
+        public ConsoleMatchHashDialog()
+        {
+            Height = 20;
+        }
+    
         private string inputHash { get; set; }
         private string inputSourceText { get; set; }
         private string currentInfo { get; set; }
@@ -287,22 +305,17 @@ namespace HashUtil
 
     class ConsoleRunner
     {
-
-
-        private void draw()
-        { 
-
-        }
-        
         public void Run()
         {
             Clear();
             CursorVisible = false;
-
+            var height = 20;
             switch(Runtime.Parameters.Mode)
             {
                 case HashingMode.Match:
-                    new ConsoleMatchHashDialog().Match();
+                    var dlg = new ConsoleMatchHashDialog();
+                    dlg.Match();
+                    height = dlg.Height;
                     break;
                 case HashingMode.Calculate:
                     WriteLine("Calculation mode is currently not supported using console!");
@@ -314,7 +327,7 @@ namespace HashUtil
                     throw new Exception("Invalid Value for Mode Parameter (should never happen)");
             }
             
-            SetCursorPosition(0, ConsoleDialog.Height);
+            SetCursorPosition(0, height);
             System.Windows.Forms.SendKeys.SendWait("{Enter}");
             RuntimeUtils.FreeConsole();
             Application.Current.Shutdown();
