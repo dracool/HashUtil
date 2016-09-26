@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
 namespace HashUtil
 {
-    using System.IO;
-    using System.Threading;
     using static Console;
     using static ConsoleDrawer;
 
