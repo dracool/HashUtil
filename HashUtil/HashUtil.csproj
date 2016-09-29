@@ -69,9 +69,7 @@
   <PropertyGroup>
     <TargetZone>LocalIntranet</TargetZone>
   </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
-  </PropertyGroup>
+  <PropertyGroup />
   <ItemGroup>
     <Reference Include="Gu.Wpf.Adorners, Version=1.1.1.2, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Gu.Wpf.Adorners.1.1.1.2\lib\net45\Gu.Wpf.Adorners.dll</HintPath>
@@ -153,7 +151,6 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="packages.config" />
-    <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
