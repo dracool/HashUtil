@@ -20,12 +20,7 @@ namespace HashUtil
                     new CalculateHashesDialog().Calculate();
                     break;
                 case HashingMode.Select:
-                    MessageBox.Show(
-                        "Selection Mode is not implemented for the graphical interface",
-                        "HashUtil",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Error);
-                    Application.Current.Shutdown();
+                    new SelectDataDialog().Show();
                     break;
                 default:
                     throw new Exception("Invalid value for Mode Parameter (should never happen)");

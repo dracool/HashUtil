@@ -162,7 +162,7 @@ namespace HashUtil
             }
         });
         
-        static public void Dot(int x, int y, char c)
+        static public void Dot(int x, int y, char c = '+')
         {
             SetCursorPosition(x, y);
             Write(c);
