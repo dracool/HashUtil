@@ -114,9 +114,12 @@ namespace HashUtil
         {
             var fg = ForegroundColor;
             var bg = BackgroundColor;
+            var x = CursorLeft;
+            var y = CursorTop;
             a();
             ForegroundColor = fg;
-            BackgroundColor = bg; 
+            BackgroundColor = bg;
+            SetCursorPosition(x, y); 
         }
 
         static void InvertColors()
@@ -161,12 +164,12 @@ namespace HashUtil
                 Write(c);
             }
         });
-        
-        static public void Dot(int x, int y, char c = '+')
+
+        static public void Dot(int x, int y, char c = '+') => Drawing(() =>
         {
             SetCursorPosition(x, y);
             Write(c);
-        }
+        });
 
         static public void Box(int x, int y, int w, int h)
         {
