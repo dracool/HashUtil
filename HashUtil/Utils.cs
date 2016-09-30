@@ -49,14 +49,20 @@ namespace HashUtil
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool FreeConsole();
     }
-
+    
     static class DispatcherUtils
     {
-        public static void SafeUpdate<T>(this T obj, Action<T> updater) where T: DispatcherObject
+        public static void Synchronous<T>(this T obj, Action<T> updater)
+            where T: DispatcherObject
         {
             obj.Dispatcher.Invoke(() => updater(obj));
         }
 
+        public static void Asynchronous<T>(this T obj, Action<T> updater)
+            where T : DispatcherObject
+        {
+            obj.Dispatcher.BeginInvoke((Action)(() => updater(obj)));
+        }
 
         public static ItemContainer GetContainerAtPoint<ItemContainer>(this ItemsControl control, Point p)
                             where ItemContainer : DependencyObject

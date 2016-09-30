@@ -28,28 +28,32 @@ namespace HashUtil
 
         public void Calculate()
         {
-            Task.Run(() =>
-            {
-                var hasher = new HashChecker();
-                hasher.Progress += Hasher_Progress;
-                using (var filestream = new FileStream(Runtime.Parameters.FilePath, FileMode.Open, FileAccess.Read))
-                {
-                    hasher.Data = filestream;
-
-                    var result = hasher.CalculateHashes().ToDictionary(
-                        kv => kv.Key,
-                        kv => HashUtils.BytesToHex(kv.Value)
-                    );
-                    
-                    this.SafeUpdate((t) =>
-                    {
-                        Resources["result"] = result;
-                        progressBarHashing.Visibility = Visibility.Collapsed;
-                    });
-                }
-                hasher.Progress -= Hasher_Progress;
-            });
+            var client = new CalculateHashesClient();
+            client.Progress += Client_Progress;
+            client.Calculated += Client_Calculated;
+            Task.Run((Action)client.Calculate);
             Show();
+        }
+
+        private void Client_Calculated(object sender, CalculatedEventArgs e)
+        {
+            var client = sender as CalculateHashesClient;
+            client.Calculated -= Client_Calculated;
+            client.Progress -= Client_Progress;
+            this.Synchronous((t) =>
+            {
+                Resources["result"] = e.Hashes.ToDictionary((kv) => kv.Key, (kv) => HashUtils.BytesToHex(kv.Value));
+                progressBarHashing.Visibility = Visibility.Collapsed;
+            });
+        }
+        private void Client_Progress(object sender, ProgressEventArgs e)
+        {
+            progressBarHashing.Asynchronous((p) =>
+            {
+                p.IsIndeterminate = e.IsBoundUnknown;
+                p.Maximum = e.UpperBound;
+                p.Value = e.Current;
+            });
         }
 
         private void CopySelectedToClipboard()
@@ -78,16 +82,6 @@ namespace HashUtil
                 sb.AppendLine($"{kv.Key.Trim()}\t{kv.Value}");
             }
             Clipboard.SetText(sb.ToString());
-        }
-
-        private void Hasher_Progress(object sender, ProgressEventArgs e)
-        {
-            progressBarHashing.SafeUpdate((p) =>
-            {
-                p.IsIndeterminate = e.IsBoundUnknown;
-                p.Maximum = e.UpperBound;
-                p.Value = e.Current;
-            });
         }
 
         private void Menu_CopySelected_Click(object sender, RoutedEventArgs e)

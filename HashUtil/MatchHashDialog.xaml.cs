@@ -59,7 +59,7 @@ namespace HashUtil
                     {
                         text = "No matching hash was found\nplease check the input hash or repair the file";
                     }
-                    this.SafeUpdate((t) =>
+                    this.Synchronous((t) =>
                     {
                         progressBarHashing.Visibility = Visibility.Collapsed;
                         labelCurrentInfo.Content = text;
@@ -73,7 +73,7 @@ namespace HashUtil
 
         private void Hasher_Progress(object sender, ProgressEventArgs e)
         {
-            progressBarHashing.SafeUpdate((p) => {
+            progressBarHashing.Synchronous((p) => {
                 p.IsIndeterminate = e.IsBoundUnknown;
                 p.Maximum = e.UpperBound;
                 p.Value = e.Current;
