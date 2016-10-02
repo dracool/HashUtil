@@ -1,13 +1,13 @@
-﻿<Window x:Class="HashUtil.CalculateHashesDialog"
+﻿<Window x:Class="HashUtil.Graphical.CalculateHashesDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:HashUtil"
+        xmlns:local="clr-namespace:HashUtil.Graphical"
         mc:Ignorable="d"
-        Title="HashUtil" Height="332" Width="929">
+        Title="HashUtil (List)" Height="332" Width="929">
     <Grid>
-        <ListView x:Name="listView" ItemsSource="{DynamicResource result}" Margin="0,0,0,18">
+        <ListView x:Name="ListView" ItemsSource="{DynamicResource result}" Margin="0,0,0,0">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Algorithm"
@@ -24,6 +24,6 @@
                 </ContextMenu>
             </ListView.ContextMenu>
         </ListView>
-        <ProgressBar x:Name="progressBarHashing" Height="18" VerticalAlignment="Bottom"/>
+        <ProgressBar x:Name="ProgressBarHashing" Height="18" VerticalAlignment="Bottom"/>
     </Grid>
 </Window>

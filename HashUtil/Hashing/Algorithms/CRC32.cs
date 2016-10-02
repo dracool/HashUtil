@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 
-namespace HashUtil.Algorithms
+namespace HashUtil.Hashing.Algorithms
 {
     /// <summary>
     /// Implements a 32-bit CRC hash algorithm compatible with Zip etc.
@@ -23,11 +23,11 @@ namespace HashUtil.Algorithms
         public const uint DefaultPolynomial = 0xedb88320u;
         public const uint DefaultSeed = 0xffffffffu;
 
-        static uint[] defaultTable;
+        static uint[] _defaultTable;
 
-        readonly uint seed;
-        readonly uint[] table;
-        uint hash;
+        readonly uint _seed;
+        readonly uint[] _table;
+        uint _hash;
 
         public Crc32()
             : this(DefaultPolynomial, DefaultSeed)
@@ -36,28 +36,28 @@ namespace HashUtil.Algorithms
 
         public Crc32(uint polynomial, uint seed)
         {
-            table = InitializeTable(polynomial);
-            this.seed = hash = seed;
+            _table = InitializeTable(polynomial);
+            _seed = _hash = seed;
         }
 
         public override void Initialize()
         {
-            hash = seed;
+            _hash = _seed;
         }
 
         protected override void HashCore(byte[] array, int ibStart, int cbSize)
         {
-            hash = CalculateHash(table, hash, array, ibStart, cbSize);
+            _hash = CalculateHash(_table, _hash, array, ibStart, cbSize);
         }
 
         protected override byte[] HashFinal()
         {
-            var hashBuffer = UInt32ToBigEndianBytes(~hash);
+            var hashBuffer = UInt32ToBigEndianBytes(~_hash);
             HashValue = hashBuffer;
             return hashBuffer;
         }
 
-        public override int HashSize { get { return 32; } }
+        public override int HashSize => 32;
 
         public static uint Compute(byte[] buffer)
         {
@@ -76,8 +76,8 @@ namespace HashUtil.Algorithms
 
         static uint[] InitializeTable(uint polynomial)
         {
-            if (polynomial == DefaultPolynomial && defaultTable != null)
-                return defaultTable;
+            if (polynomial == DefaultPolynomial && _defaultTable != null)
+                return _defaultTable;
 
             var createTable = new uint[256];
             for (var i = 0; i < 256; i++)
@@ -92,7 +92,7 @@ namespace HashUtil.Algorithms
             }
 
             if (polynomial == DefaultPolynomial)
-                defaultTable = createTable;
+                _defaultTable = createTable;
 
             return createTable;
         }
@@ -115,7 +115,7 @@ namespace HashUtil.Algorithms
             return result;
         }
 
-        public static new Crc32 Create()
+        public new static Crc32 Create()
         {
             return new Crc32();
         }

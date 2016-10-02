@@ -5,22 +5,22 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace HashUtil
+namespace HashUtil.Graphical
 {
     class GuiRunner
     {
-        public void Run()
+        public void Run(ExecutionInfo info)
         {
-            switch(Runtime.Parameters.Mode)
+            switch(info.Mode)
             {
                 case HashingMode.Match:
-                    new MatchHashDialog().Match();
+                    new MatchHashDialog().Match(info);
                     break;
                 case HashingMode.Calculate:
-                    new CalculateHashesDialog().Calculate();
+                    new CalculateHashesDialog().Calculate(info.FilePath);
                     break;
                 case HashingMode.Select:
-                    new SelectDataDialog().Show();
+                    new SelectDataDialog().Initialize();
                     break;
                 default:
                     throw new Exception("Invalid value for Mode Parameter (should never happen)");

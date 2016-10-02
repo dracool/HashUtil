@@ -1,0 +1,87 @@
+﻿<Window x:Class="HashUtil.Graphical.SelectDataDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:HashUtil.Graphical"
+        xmlns:adorners="http://gu.se/Adorners"
+        mc:Ignorable="d"
+        Title="HashUtil" Width="300" Height="216.333">
+    <Window.Resources>
+        <local:BooleanMutliValueAndConverter x:Key="BooleanAndConverter"/>
+        <local:SelectDiagStartIsEnabledConverter x:Key="StartIsEnabledConverter"/>
+        <local:StringNotEmptyConverter x:Key="StringNotEmptyConverter"/>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="76"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="29"/>
+            <RowDefinition Height="21"/>
+            <RowDefinition Height="21"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="29"/>
+        </Grid.RowDefinitions>
+        <TextBox adorners:Watermark.Text="File to Hash" Grid.Row="0" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="1" Margin="3,3,3,3" x:Name="TbFilePath"/>
+        <Button Grid.Row="0" Grid.Column="1" Grid.RowSpan="1" Grid.ColumnSpan="1" Margin="3,3,3,3" x:Name="BtnSelectFilePath" Content="Select.." Click="btnSelectFilePath_Click"/>
+        <RadioButton Grid.Row="1" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="2" Margin="3,3,3,3" x:Name="RbGenerateHashes"  Content="Generate Hashes" GroupName="methodSelection" IsChecked="True"/>
+        <RadioButton Grid.Row="2" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="2" Margin="3,3,3,3" x:Name="RbCheckHash"  Content="Check against Hash" GroupName="methodSelection" />
+
+        <Grid Grid.Row="3" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="2" Margin="18,0,0,0" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="76"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="29"/>
+                <RowDefinition Height="21"/>
+                <RowDefinition Height="29"/>
+            </Grid.RowDefinitions>
+            <CheckBox Grid.Row="0" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="2" Margin="3,3,3,3" x:Name="CbSourceInput" Content="" VerticalAlignment="Center" IsEnabled="{Binding IsChecked, ElementName=RbCheckHash}"/>
+            <TextBox adorners:Watermark.Text="Enter Hash" Grid.Row="0" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="2" Margin="21,3,3,3" x:Name="TbSourceInput">
+                <TextBox.IsEnabled>
+                    <MultiBinding Converter="{StaticResource BooleanAndConverter}">
+                        <Binding ElementName="CbSourceInput" Path="IsChecked"/>
+                        <Binding ElementName="RbCheckHash" Path="IsChecked"/>
+                    </MultiBinding>
+                </TextBox.IsEnabled>
+            </TextBox>
+            <CheckBox Grid.Row="1" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="2" Margin="3,3,3,3" x:Name="CbSourceClipboard"  Content="From Clipboard" IsEnabled="{Binding IsChecked, ElementName=RbCheckHash}"/>
+            <CheckBox Grid.Row="2" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="2" Margin="3,3,3,3" x:Name="CbSourceFile" VerticalAlignment="Center" IsEnabled="False"  />
+            <TextBox adorners:Watermark.Text="Load Hash from File" Grid.Row="2" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="1" Margin="21,3,3,3" x:Name="TbSourceFile">
+                <TextBox.IsEnabled>
+                    <MultiBinding Converter="{StaticResource BooleanAndConverter}">
+                        <Binding ElementName="CbSourceFile" Path="IsChecked"/>
+                        <Binding ElementName="RbCheckHash" Path="IsChecked"/>
+                    </MultiBinding>
+                </TextBox.IsEnabled>
+            </TextBox>
+            <Button Grid.Row="2" Grid.Column="1" Grid.RowSpan="1" Grid.ColumnSpan="1" Margin="3,3,3,3" x:Name="BtnSelectHashSourceFile" Content="Select.." Click="btnSelectHashSourceFile_Click">
+                <Button.IsEnabled>
+                    <MultiBinding Converter="{StaticResource BooleanAndConverter}">
+                        <Binding ElementName="CbSourceFile" Path="IsChecked"/>
+                        <Binding ElementName="RbCheckHash" Path="IsChecked"/>
+                    </MultiBinding>
+                </Button.IsEnabled>
+            </Button>
+        </Grid>
+
+        <Button Grid.Row="4" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="2" Margin="60,3,60,3" x:Name="BtnStart" Content="Start" Click="btnStart_Click">
+            <Button.IsEnabled>
+                <MultiBinding Converter="{StaticResource StartIsEnabledConverter}">
+                    <Binding ElementName="TbFilePath" Path="Text" Converter="{StaticResource StringNotEmptyConverter}"/>
+                    <Binding ElementName="RbGenerateHashes" Path="IsChecked"/>
+                    <Binding ElementName="RbCheckHash" Path="IsChecked"/>
+                    <Binding ElementName="CbSourceInput" Path="IsChecked"/>
+                    <Binding ElementName="TbSourceInput"  Path="Text" Converter="{StaticResource StringNotEmptyConverter}"/>
+                    <Binding ElementName="CbSourceClipboard" Path="IsChecked"/>
+                    <Binding ElementName="CbSourceFile" Path="IsChecked"/>
+                    <Binding ElementName="TbSourceFile"  Path="Text" Converter="{StaticResource StringNotEmptyConverter}"/>
+                </MultiBinding>
+            </Button.IsEnabled>
+        </Button>
+
+    </Grid>
+</Window>

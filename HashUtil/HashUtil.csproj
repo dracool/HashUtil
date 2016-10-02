@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{D232A95C-38E1-46F1-8842-7B56BE9E68DB}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>HashUtil</RootNamespace>
     <AssemblyName>HashUtil</AssemblyName>
@@ -96,38 +96,55 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="CalculateHashesDialog.xaml.cs">
+    <Compile Include="Console\GUI\ConsoleKeyEventArgs.cs" />
+    <Compile Include="Console\GUI\ConsoleDialog.cs" />
+    <Compile Include="Console\GUI\CliElement.cs" />
+    <Compile Include="Console\DrawHelper.cs" />
+    <Compile Include="Console\GUI\Menu.cs" />
+    <Compile Include="Console\GUI\TextBlock.cs" />
+    <Compile Include="Console\GUI\TextBox.cs" />
+    <Compile Include="Console\MatchHashDialog.cs" />
+    <Compile Include="Graphical\Converters.cs" />
+    <Compile Include="Graphical\CalculateHashesDialog.xaml.cs">
       <DependentUpon>CalculateHashesDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ConsoleRunner.cs" />
+    <Compile Include="Console\ConsoleRunner.cs" />
+    <Compile Include="Parameters.cs" />
+    <Compile Include="Utils_DispatcherObject.cs" />
     <Compile Include="EntryPoint.cs" />
-    <Compile Include="GuiRunner.cs" />
-    <Compile Include="SelectDataDialog.xaml.cs">
+    <Compile Include="Graphical\GuiRunner.cs" />
+    <Compile Include="Hashing\HashCalculateClient.cs" />
+    <Compile Include="Hashing\Hash.cs" />
+    <Compile Include="Hashing\EventArgs.cs" />
+    <Compile Include="Hashing\Exceptions.cs" />
+    <Compile Include="Hashing\Utils_Hashing.cs" />
+    <Compile Include="Hashing\HashStatus.cs" />
+    <Compile Include="Hashing\HashMatchClient.cs" />
+    <Compile Include="Graphical\SelectDataDialog.xaml.cs">
       <DependentUpon>SelectDataDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Utils.cs" />
-    <Compile Include="MatchHashDialog.xaml.cs">
+    <Compile Include="Utils_ConsoleInterop.cs" />
+    <Compile Include="Graphical\MatchHashDialog.xaml.cs">
       <DependentUpon>MatchHashDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Runtime.cs" />
-    <Compile Include="SystemHashFinder.cs" />
-    <Compile Include="Algorithms\CRC32.cs" />
-    <Compile Include="Algorithms\CRC64.cs" />
-    <Compile Include="HashChecker.cs" />
-    <Compile Include="Algorithms\SHA3.cs" />
+    <Compile Include="Hashing\SystemHashFinder.cs" />
+    <Compile Include="Hashing\Algorithms\CRC32.cs" />
+    <Compile Include="Hashing\Algorithms\CRC64.cs" />
+    <Compile Include="Hashing\HashClient.cs" />
+    <Compile Include="Hashing\Algorithms\SHA3.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="CalculateHashesDialog.xaml">
+    <Page Include="Graphical\CalculateHashesDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MatchHashDialog.xaml">
+    <Page Include="Graphical\MatchHashDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="SelectDataDialog.xaml">
+    <Page Include="Graphical\SelectDataDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

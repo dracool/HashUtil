@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 
-namespace HashUtil.Algorithms
+namespace HashUtil.Hashing.Algorithms
 {
     /// <summary>
     /// Implements a 64-bit CRC hash algorithm for a given polynomial.
@@ -19,10 +19,10 @@ namespace HashUtil.Algorithms
     {
         public const ulong DefaultSeed = 0x0;
 
-        readonly ulong[] table;
+        readonly ulong[] _table;
 
-        readonly ulong seed;
-        ulong hash;
+        readonly ulong _seed;
+        ulong _hash;
 
         public Crc64(ulong polynomial)
             : this(polynomial, DefaultSeed)
@@ -31,28 +31,28 @@ namespace HashUtil.Algorithms
 
         public Crc64(ulong polynomial, ulong seed)
         {
-            table = InitializeTable(polynomial);
-            this.seed = hash = seed;
+            _table = InitializeTable(polynomial);
+            _seed = _hash = seed;
         }
 
         public override void Initialize()
         {
-            hash = seed;
+            _hash = _seed;
         }
 
         protected override void HashCore(byte[] array, int ibStart, int cbSize)
         {
-            hash = CalculateHash(hash, table, array, ibStart, cbSize);
+            _hash = CalculateHash(_hash, _table, array, ibStart, cbSize);
         }
 
         protected override byte[] HashFinal()
         {
-            var hashBuffer = UInt64ToBigEndianBytes(hash);
+            var hashBuffer = UInt64ToBigEndianBytes(_hash);
             HashValue = hashBuffer;
             return hashBuffer;
         }
 
-        public override int HashSize { get { return 64; } }
+        public override int HashSize => 64;
 
         protected static ulong CalculateHash(ulong seed, ulong[] table, IList<byte> buffer, int start, int size)
         {
@@ -134,7 +134,7 @@ namespace HashUtil.Algorithms
             return CalculateHash(seed, Table, buffer, 0, buffer.Length);
         }
 
-        public static new Crc64Iso Create()
+        public new static Crc64Iso Create()
         {
             return new Crc64Iso();
         }
@@ -169,7 +169,7 @@ namespace HashUtil.Algorithms
             return CalculateHash(seed, Table, buffer, 0, buffer.Length);
         }
 
-        public static new Crc64Ecma Create()
+        public new static Crc64Ecma Create()
         {
             return new Crc64Ecma();
         }

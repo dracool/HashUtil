@@ -12,9 +12,7 @@ namespace HashUtil
         [STAThread]
         public static void Main(string[] args)
         {
-            bool enabled = RuntimeUtils.EnableConsole() || RuntimeUtils.IsCommandLine;
-            Runtime.Builder.Interface = enabled ? Interface.Console : Interface.GUI;
-
+            ConsoleUtils.EnableConsole();
             App.Main();
         }
     }

@@ -5,68 +5,69 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Diagnostics;
-using System.IO;
+using HashUtil.Hashing;
+using HashUtil.Graphical;
+using HashUtil.Console;
 
 namespace HashUtil
 {
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App : Application
+    public partial class App
     {
         protected override void OnStartup(StartupEventArgs e)
         {
+            var info = new ExecutionInfo();
+            
             if(e.Args.Length >= 1)
             {
-                Runtime.Builder.FilePath = e.Args[0];
+                info.FilePath = e.Args[0];
 
                 if (e.Args.Length >= 2)
                 {
-                    Runtime.Builder.Hash = e.Args[1];
-                    Runtime.Builder.HashSource = HashSource.Argument;
-                    Runtime.Builder.Mode = HashingMode.Match;
+                    try
+                    {
+                        info.Hashes.Add(new HashInfo(new Hash(e.Args[1]), HashSource.Argument));
+                        info.Mode = HashingMode.Match;
+                    }
+                    catch
+                    {
+                        info.Hashes.Clear();
+                        info.Mode = HashingMode.Calculate;
+                    }
                 }
                 else
                 {
-                    byte[] hash;
-                    HashSource source;
-                    if (SystemHashFinder.Find(out hash, out source))
+                    var result = SystemHashFinder.FindAll(info.FilePath);
+                    if (result.Count > 0)
                     {
-                        Runtime.Builder.Hash = HashUtils.BytesToHex(hash);
-                        Runtime.Builder.HashSource = source;
-                        Runtime.Builder.Mode = HashingMode.Match;
+                        info.Hashes.AddRange(result);
+                        info.Mode = HashingMode.Match;
                     }
                     else
                     {
-                        Runtime.Builder.Hash = string.Empty;
-                        Runtime.Builder.HashSource = HashSource.None;
-                        Runtime.Builder.Mode = HashingMode.Calculate;
+                        info.Hashes.Clear();
+                        info.Mode = HashingMode.Calculate;
                     }
                 }
             }
             else
             {
                 //no arguments given, using select mode
-                Runtime.Builder.Mode = HashingMode.Select;
-                Runtime.Builder.HashSource = HashSource.None;
-                Runtime.Builder.Hash = string.Empty;
-                Runtime.Builder.FilePath = string.Empty;
+                info.FilePath = string.Empty;
+                info.Hashes.Clear();
+                info.Mode = HashingMode.Select;
             }
             
-            Runtime.Builder.Build();
-
-            switch(Runtime.Parameters.Interface)
+            if(ConsoleUtils.IsCommandLine)
             {
-                case Interface.Console:
-                    new ConsoleRunner().Run();
-                    break;
-                case Interface.GUI:
-                    new GuiRunner().Run();
-                    break;
-                default:
-                    throw new Exception("Invalid value for Interface Parameter (should never happen)");
+                new ConsoleRunner().Run(info);
             }
-        } 
+            else
+            {
+                new GuiRunner().Run(info);
+            }
+        }
     }
 }
