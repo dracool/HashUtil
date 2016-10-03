@@ -23,6 +23,15 @@ namespace HashUtil.Console.GUI
                 Width = System.Console.BufferWidth,
                 Height = 5,
             };
+
+            Closed += (s, e) =>
+            {
+                System.Console.CancelKeyPress -= ConsoleDialog_CancelKeyPress;
+                System.Windows.Forms.SendKeys.SendWait("{Enter}");
+                System.Console.SetCursorPosition(0, Height - 2);
+                System.Console.CursorVisible = true;
+                ConsoleUtils.FreeConsole();
+            };
         }
 
         public string Title
@@ -31,7 +40,7 @@ namespace HashUtil.Console.GUI
             set { _tbTitle.Text = value; }
         }
 
-        private TextBox _tbTitle;
+        private readonly TextBox _tbTitle;
         private bool _closeRequested;
 
         public event EventHandler<ConsoleKeyEventArgs> KeyReceived;
@@ -58,7 +67,6 @@ namespace HashUtil.Console.GUI
             {
                 try
                 {
-
                     var info = System.Console.ReadKey(true);
                     Dispatcher.BeginInvoke(DispatcherPriority.Send, (Action)(() => DoKeyReceived(info)));
                 }
@@ -84,12 +92,8 @@ namespace HashUtil.Console.GUI
         public void Close()
         {
             _closeRequested = true;
-            System.Console.CancelKeyPress -= ConsoleDialog_CancelKeyPress;
-            System.Console.SetCursorPosition(0, Height + 1);
-            System.Console.CursorVisible = true;
-            System.Windows.Forms.SendKeys.SendWait("{Enter}");
-            ConsoleUtils.FreeConsole();
             Dispatcher.InvokeShutdown();
+            DoClosed();
         }
     }
 }

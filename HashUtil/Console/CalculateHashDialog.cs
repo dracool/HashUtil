@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using HashUtil.Console.GUI;
@@ -8,14 +9,14 @@ using HashUtil.Hashing;
 
 namespace HashUtil.Console
 {
-    internal class MatchHashDialog : ConsoleDialog
+    internal class CalculateHashDialog : ConsoleDialog
     {
-        public MatchHashDialog()
+        public CalculateHashDialog()
         {
             _tbProgress = new TextBlock
             {
-                Left = Left + Width/2,
-                Width = Width/2 - 1,
+                Left = Left + Width / 2,
+                Width = Width / 2 - 1,
                 Top = Top + 6,
                 Height = 1,
                 Alignment = TextAlignment.Right,
@@ -31,25 +32,18 @@ namespace HashUtil.Console
                 Height = 1,
                 Alignment = TextAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Center,
-                Text = string.Empty,
+                Text = "Calculating Hashes",
             };
             AddChild(_tbCurrentInfo);
             AddChild(_tbProgress);
         }
-
-        private List<HashInfo> _hInfoList;
-
-        private TextBlock _tbProgress;
-        private readonly TextBlock _tbCurrentInfo;
-
-        public void Match(ExecutionInfo info)
+        public void Calculate(string filePath)
         {
-            var client = new HashMatchClient<HashInfo>();
+            var client = new HashCalculateClient();
             client.ProgressChanged += Client_ProgressChanged;
             client.StatusChanged += Client_StatusChanged;
-            _hInfoList = info.Hashes;
-            _tbCurrentInfo.Text = "Calculating Hashes";
-            Task.Run(() => client.Match(info.FilePath, _hInfoList, hi => hi.Hash));
+
+            Task.Run(() => client.Calculate(filePath));
             Show();
         }
 
@@ -61,65 +55,49 @@ namespace HashUtil.Console
                 case HashStatus.Calculating:
                     break;
                 case HashStatus.Success:
-                    var client = sender as HashMatchClient<HashInfo>;
+                case HashStatus.Failure:
+                    var client = sender as HashCalculateClient;
                     if (client == null) throw new ArgumentNullException(nameof(client));
 
-                    var result = _hInfoList
-                        .Select(hi => new Tuple<string, string, string>(
-                            client.Result.ContainsKey(hi) ? client.Result[hi] : " --- ",
-                            Enum.GetName(typeof(HashSource), hi.Source),
-                            hi.Hash
-                        ))
+                    var result = client.Result
+                        .Select(kv => new Tuple<string, string>(kv.Key, kv.Value))
                         .ToList();
 
-                    var methodTextLength = result.Max(t => t.Item1.Length) + 2;
-                    var sourceTextLength = result.Max(t => t.Item2.Length) + 2;
-                    var hashTextLength = Width - methodTextLength - sourceTextLength;
+                    result.Sort((l,r) => string.Compare(l.Item1, r.Item1, StringComparison.InvariantCulture));
 
                     this.SafeUpdate(() =>
                     {
-                        _tbCurrentInfo.Text = "Find matching hashes below";
+                        _tbCurrentInfo.Text = "Done calculating hashes";
                         var currentLine = Top + 9;
 
-                        RemoveChild(_tbProgress);
-                        _tbProgress = null;
+                        var methodTextLength = result.Max(t => t.Item1.Length) + 2;
+                        var hashTextLength = Width - methodTextLength - 1;
 
                         foreach (var tuple in result)
                         {
                             #region create text blocks
                             var method = new TextBlock
                             {
-                                Left = Left,
+                                Left = Left + 1,
                                 Top = currentLine,
                                 Width = methodTextLength,
                                 Text = tuple.Item1,
                                 Height = 1,
                             };
-
-                            var source = new TextBlock
+                            
+                            var hash = new TextBlock
                             {
                                 Left = method.Left + methodTextLength + 1,
                                 Top = currentLine,
-                                Width = sourceTextLength,
-                                Text = tuple.Item2,
-                                Height = 1,
-                            };
-
-                            var hash = new TextBlock
-                            {
-                                Left = source.Left + sourceTextLength + 1,
-                                Top = currentLine,
                                 Width = hashTextLength - 2,
-                                Text = tuple.Item3,
+                                Text = tuple.Item2,
                                 Height = 1,
                                 Trimming = TextTrimming.CharacterEllipsis,
                             };
                             #endregion
 
                             AddChild(method);
-                            AddChild(source);
                             AddChild(hash);
-
                             currentLine += 2;
                         }
 
@@ -131,25 +109,9 @@ namespace HashUtil.Console
                         InvalidateLayout();
                         Close();
                     });
-
-                    client.ProgressChanged -= Client_ProgressChanged;
-                    client.StatusChanged -= Client_StatusChanged;
-                    break;
-                case HashStatus.Failure:
-                    client = sender as HashMatchClient<HashInfo>;
-                    if (client == null) throw new ArgumentNullException(nameof(client));
-
-                    client.ProgressChanged -= Client_ProgressChanged;
-                    client.StatusChanged -= Client_StatusChanged;
-                    this.SafeUpdate(() => 
-                    {
-                        _tbCurrentInfo.Text = "No matching hashes were found";
-                        Height = Top + 8;
-                        Close();
-                    });
                     break;
                 default:
-                    throw new Exception("Unexpected value for HashStatus (should never happen)");
+                    throw new Exception("Invalid HashStatus Value (should never happen)");
             }
         }
 
@@ -160,6 +122,9 @@ namespace HashUtil.Console
             var text = string.Join(" / ", e.Current.ToString("D" + max.Length.ToString()), max);
             _tbProgress.SafeUpdate(p => p.Text = text);
         }
+
+        private readonly TextBlock _tbProgress;
+        private readonly TextBlock _tbCurrentInfo;
 
         protected override void DoUpdate(bool recreate)
         {

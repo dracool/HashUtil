@@ -20,8 +20,7 @@ namespace HashUtil.Console
                     new MatchHashDialog { Title = "HashUtil" }.Match(info);
                     break;
                 case HashingMode.Calculate:
-                    //TODO: Add console version of CalculateHashDialog
-                    WriteLine("Calculation mode is currently not supported from command line");
+                    new CalculateHashDialog {Title = "HashUtil"}.Calculate(info.FilePath);
                     break;
                 case HashingMode.Select:
                     WriteLine("Interactive mode is not supported on command line");
