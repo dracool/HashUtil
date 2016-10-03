@@ -91,7 +91,7 @@ namespace HashUtil.Hashing.Algorithms
         protected Sha3(int hashBitLength)
         {
             if (hashBitLength != 224 && hashBitLength != 256 && hashBitLength != 384 && hashBitLength != 512)
-                throw new ArgumentException("hashBitLength must be 224, 256, 384, or 512", nameof(hashBitLength));
+                throw new ArgumentException(@"Value cannot be null or whitespace.", nameof(hashBitLength));
             // ReSharper disable once VirtualMemberCallInConstructor
             Initialize();
             HashSizeValue = hashBitLength;

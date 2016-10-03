@@ -18,6 +18,7 @@ namespace HashUtil
     {
         protected override void OnStartup(StartupEventArgs e)
         {
+            //TODO: support command line parameters properly
             var info = new ExecutionInfo();
             
             if(e.Args.Length >= 1)

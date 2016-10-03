@@ -96,6 +96,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Console\CalculateHashDialog.cs" />
     <Compile Include="Console\GUI\ConsoleKeyEventArgs.cs" />
     <Compile Include="Console\GUI\ConsoleDialog.cs" />
     <Compile Include="Console\GUI\CliElement.cs" />
@@ -104,13 +105,17 @@
     <Compile Include="Console\GUI\TextBlock.cs" />
     <Compile Include="Console\GUI\TextBox.cs" />
     <Compile Include="Console\MatchHashDialog.cs" />
+    <Compile Include="Extensions\DependencyObjectExtensions.cs" />
     <Compile Include="Graphical\Converters.cs" />
     <Compile Include="Graphical\CalculateHashesDialog.xaml.cs">
       <DependentUpon>CalculateHashesDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Console\ConsoleRunner.cs" />
-    <Compile Include="Parameters.cs" />
-    <Compile Include="Utils_DispatcherObject.cs" />
+    <Compile Include="HashInfo.cs" />
+    <Compile Include="HashingMode.cs" />
+    <Compile Include="HashSource.cs" />
+    <Compile Include="ExecutionInfo.cs" />
+    <Compile Include="Extensions\DispatcherObjectExtensions.cs" />
     <Compile Include="EntryPoint.cs" />
     <Compile Include="Graphical\GuiRunner.cs" />
     <Compile Include="Hashing\HashCalculateClient.cs" />

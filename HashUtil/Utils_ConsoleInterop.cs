@@ -1,20 +1,28 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using System.Threading;
 
 namespace HashUtil
 {
-    static class ConsoleUtils
+    /// <summary>
+    /// Utilities used to distinguish and use console mode
+    /// </summary>
+    internal static class ConsoleUtils
     {
         [DllImport("kernel32.dll")]
         private static extern IntPtr GetConsoleWindow();
 
-        private static Lazy<bool> _isCommandLine = new Lazy<bool>(() => GetConsoleWindow() != IntPtr.Zero, true);
-        private static bool _isConsoleEnabled = false;
-        public static bool IsCommandLine => _isCommandLine.Value || _isConsoleEnabled;
+        // ReSharper disable once InconsistentNaming (backing field)
+        private static readonly Lazy<bool> isCommandLine = new Lazy<bool>(() => GetConsoleWindow() != IntPtr.Zero, true);
+        private static bool _isConsoleEnabled;
+        public static bool IsCommandLine => isCommandLine.Value || _isConsoleEnabled;
         
         [DllImport("Kernel32.dll")]
         private static extern bool AttachConsole(int processId);
+
+        /// <summary>
+        /// Attaches the application to the console if it was started from command line
+        /// </summary>
+        /// <returns><value>true</value> if the console was attached, <value>false</value> otherwise</returns>
         public static bool EnableConsole()
         {
             var enabled = AttachConsole(-1);
@@ -24,10 +32,15 @@ namespace HashUtil
 
         [DllImport("kernel32.dll", EntryPoint = "FreeConsole", SetLastError = true)]
         private static extern bool freeConsole();
+
+        /// <summary>
+        /// Detaches a previously attached console
+        /// </summary>
+        /// <returns><c>true</c> if detaching was sucessful, <value>false</value> otherwise</returns>
         public static bool FreeConsole()
         {
-            var enabled = !freeConsole();
-            _isConsoleEnabled = enabled;
+            var enabled = freeConsole();
+            _isConsoleEnabled = !enabled;
             return enabled;
         }
     }

@@ -1,26 +1,13 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Threading;
 
 namespace HashUtil
 {
-    static class DispatcherUtils
+    internal static class DependencyObjectExtensions
     {
-        public static void SafeUpdate<T>(this T obj, Action<T> updater) where T : DispatcherObject
-        {
-            obj.Dispatcher.Invoke(() => updater(obj));
-        }
-
-        public static void SafeUpdate<T>(this T obj, Action updater) where T : DispatcherObject
-        {
-            obj.Dispatcher.Invoke(updater);
-        }
-
-
         public static TItemContainer GetContainerAtPoint<TItemContainer>(this ItemsControl control, Point p)
-                            where TItemContainer : DependencyObject
+            where TItemContainer : DependencyObject
         {
             var result = VisualTreeHelper.HitTest(control, p);
             var obj = result?.VisualHit;
